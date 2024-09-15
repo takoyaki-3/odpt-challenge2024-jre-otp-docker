@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  downloader:
+    image: alpine
+    volumes:
+      - ./:/working_dir
+    working_dir: /working_dir
+    entrypoint: ["sh", "./initial.sh"]
+    environment:
+      - API_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+  otp:
+    image: opentripplanner/opentripplanner:latest
+    container_name: otp
+    environment:
+      - JAVA_OPTS=-Xmx8G
+    volumes:
+      - ./otp:/var/opentripplanner
+    command: >
+      --build --save --serve
+    ports:
+      - "8080:8080"
+    depends_on:
+      - downloader
